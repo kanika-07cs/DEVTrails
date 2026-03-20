@@ -49,6 +49,8 @@ This makes PulseShield more practical than traditional insurance because it prot
 
 ## 4. Application Workflow
 
+<img width="1350" height="750" alt="image" src="https://github.com/user-attachments/assets/2b51317a-12b8-4b63-86a3-b077b79277f1" />
+
 1. **Onboarding**  
    Worker registers with location, work pattern, and platform
 
