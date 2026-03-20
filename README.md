@@ -175,13 +175,7 @@ PulseShield introduces **Opportunity Loss Insurance**, ensuring workers are comp
 
 ---
 
-## One-Line Pitch
-
-**“PulseShield ensures gig workers earn what they deserve — even when reality fails them.”**
-
----
-
-## Final Note
+## Conclusion
 
 PulseShield is not just insurance.
 It is a **smart financial safety net powered by AI**, designed for the future of the gig economy.
