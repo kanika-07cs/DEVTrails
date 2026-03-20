@@ -2,13 +2,7 @@
 
 ## 🧠 AI-Powered Opportunity Loss Insurance for Gig Workers
 
-![PulseShield Banner](https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80\&w=1400)
-
----
-
 ## 🌍 The Problem We See
-
-![Gig Worker Struggle](https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?q=80\&w=1200)
 
 India’s gig workers (Zomato, Swiggy, Amazon, Zepto) face **hidden income loss every day**:
 
@@ -165,19 +159,6 @@ Premium = f(risk + earning variability + location)
 * Risk heatmap
 * Fraud alerts
 * Predictive insights
-
----
-
-## 🚀 Why This Will Win
-
-✔️ Others → Event-based insurance
-🔥 PulseShield → **Income intelligence system**
-
-👉 Judges will notice:
-
-* Real-world practicality
-* Unique logic (not copied idea)
-* AI actually solving problem
 
 ---
 
