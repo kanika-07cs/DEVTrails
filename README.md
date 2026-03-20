@@ -1,6 +1,6 @@
 # PulseShield
 
-## 🧠 AI-Powered Opportunity Loss Insurance for Gig Workers
+## AI-Powered Opportunity Loss Insurance for Gig Workers
 
 ---
 
@@ -8,10 +8,10 @@
 
 India’s gig workers (Zomato, Swiggy, Amazon, Zepto, etc.) frequently lose income due to:
 
-* 🌧️ Weather conditions (rain, heat, pollution)
-* 🚦 Traffic congestion
-* 📉 Low demand periods
-* ⚙️ Platform downtime
+* Weather conditions (rain, heat, pollution)
+* Traffic congestion
+* Low demand periods
+* Platform downtime
 
 These disruptions reduce **20–30% of earnings**, yet:
 
@@ -21,7 +21,7 @@ These disruptions reduce **20–30% of earnings**, yet:
 
 ---
 
-## 💡 Solution
+## Solution
 
 ### **PulseShield – AI-Powered Opportunity Loss Insurance**
 
@@ -31,7 +31,7 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-### ⚡ How It Works
+### How It Works
 
 1. **Onboarding & Profiling**
    Workers register with location, work pattern, and delivery type.
@@ -72,59 +72,59 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-### 🚀 Key Innovation
+### Key Innovation
 
-👉 PulseShield introduces **Opportunity Loss Insurance**, ensuring workers are compensated for the **income they should have earned but couldn’t**.
-
----
-
-## 🔥 Key Features
-
-* 🧠 AI-based earning prediction
-* ⚡ Micro-loss detection (daily income gaps)
-* 🔄 Dynamic weekly premium model
-* 📊 Shadow earnings simulation
-* 🔐 Intelligent fraud detection
-* 💸 Instant automated payouts
+PulseShield introduces **Opportunity Loss Insurance**, ensuring workers are compensated for the **income they should have earned but couldn’t**.
 
 ---
 
-## ⚙️ Tech Stack
+## Key Features
+
+* AI-based earning prediction
+* Micro-loss detection (daily income gaps)
+* Dynamic weekly premium model
+* Shadow earnings simulation
+* Intelligent fraud detection
+* Instant automated payouts
+
+---
+
+## Tech Stack
 
 ![Image](https://fullstackdeeplearning.com/spring2021/lecture-6-notes-media/Infra-Tooling3.png)
 
-### 🖥️ Frontend
+### Frontend
 
 * React.js / Next.js
 
-### ⚙️ Backend
+### Backend
 
 * Node.js + Express
 
-### 🗄️ Database
+### Database
 
 * MongoDB / PostgreSQL
 
-### 🤖 AI/ML
+### AI/ML
 
 * Python
 * Scikit-learn / TensorFlow
 
-### 🌐 APIs
+### APIs
 
 * Weather API
 * Traffic API
 * Maps API
 
-### 💳 Payments
+### Payments
 
 * Razorpay (Test Mode) / UPI Simulation
 
 ---
 
-## 📊 Impact
+## Impact
 
-### 🌍 Social Impact
+### Social Impact
 
 * Financial protection for gig workers
 * Reduced income instability
@@ -132,7 +132,7 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-### 📈 Economic Impact
+### Economic Impact
 
 * Scalable to millions of workers
 * Supports gig economy growth
@@ -140,9 +140,9 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-## ✅ Benefits
+## Benefits
 
-### 👨‍💼 For Workers
+### For Workers
 
 * Instant compensation
 * No manual claims
@@ -150,7 +150,7 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-### 🏢 For Insurers
+### For Insurers
 
 * Reduced fraud using AI
 * Accurate pricing models
@@ -158,7 +158,7 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-### 🌐 For Society
+### For Society
 
 * Financial inclusion
 * Stable gig workforce
@@ -166,28 +166,22 @@ Unlike traditional insurance systems that only respond to extreme events, PulseS
 
 ---
 
-## 🚀 Why This is Unique
+## Why This is Unique
 
-✔️ Covers **invisible income loss**
-✔️ AI-driven decision system
-✔️ Fully automated payouts
-✔️ Hybrid parametric + predictive model
-
----
-
-## 🎯 One-Line Pitch
-
-👉 **“PulseShield ensures gig workers earn what they deserve — even when reality fails them.”**
+* Covers **invisible income loss**
+* AI-driven decision system
+* Fully automated payouts
+* Hybrid parametric + predictive model
 
 ---
 
-## 🔗 Repository Link
+## One-Line Pitch
 
-(Add your GitHub link here)
+**“PulseShield ensures gig workers earn what they deserve — even when reality fails them.”**
 
 ---
 
-## ⭐ Final Note
+## Final Note
 
 PulseShield is not just insurance.
 It is a **smart financial safety net powered by AI**, designed for the future of the gig economy.
