@@ -12,8 +12,6 @@ import disruptionRoutes from './routes/disruption.js';
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
 
-const cors = require("cors");
-
 app.use(cors({
   origin: [
     "http://localhost:5173",
