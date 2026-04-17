@@ -12,6 +12,7 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password,
+      role,
       location,
       platform,
       working_hours,
@@ -28,13 +29,15 @@ router.post('/register', async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 12);
+    const safeRole = role === 'admin' ? 'admin' : 'user';
     const [result] = await pool.query(
-      `INSERT INTO users (name, email, password_hash, location, platform, working_hours, avg_daily_earnings)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users (name, email, password_hash, role, location, platform, working_hours, avg_daily_earnings)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         email,
         password_hash,
+        safeRole,
         location ?? '',
         platform ?? '',
         working_hours ?? '',
@@ -43,13 +46,14 @@ router.post('/register', async (req, res) => {
     );
 
     const userId = result.insertId;
-    const token = signToken({ id: userId, email });
+    const token = signToken({ id: userId, email, role: safeRole });
     res.status(201).json({
       token,
       user: {
         id: userId,
         name,
         email,
+        role: safeRole,
         location: location ?? '',
         platform: platform ?? '',
         working_hours: working_hours ?? '',
@@ -71,7 +75,7 @@ router.post('/login', async (req, res) => {
     }
 
     const [rows] = await pool.query(
-      `SELECT id, name, email, password_hash, location, platform, working_hours, avg_daily_earnings
+      `SELECT id, name, email, role, password_hash, location, platform, working_hours, avg_daily_earnings
        FROM users WHERE email = ?`,
       [email]
     );
@@ -85,13 +89,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = signToken({ id: user.id, email: user.email });
+    const token = signToken({ id: user.id, email: user.email, role: user.role });
     res.json({
       token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
         location: user.location,
         platform: user.platform,
         working_hours: user.working_hours,
@@ -108,7 +113,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, name, email, location, platform, working_hours, avg_daily_earnings, created_at
+      `SELECT id, name, email, role, location, platform, working_hours, avg_daily_earnings, created_at
        FROM users WHERE id = ?`,
       [req.user.id]
     );
@@ -118,6 +123,7 @@ router.get('/me', authMiddleware, async (req, res) => {
       id: u.id,
       name: u.name,
       email: u.email,
+      role: u.role,
       location: u.location,
       platform: u.platform,
       working_hours: u.working_hours,
@@ -133,12 +139,16 @@ router.get('/me', authMiddleware, async (req, res) => {
 
 router.patch('/profile', authMiddleware, async (req, res) => {
   try {
-    const { name, location, platform, working_hours, avg_daily_earnings } = req.body;
+    const { name, role, location, platform, working_hours, avg_daily_earnings } = req.body;
     const fields = [];
     const vals = [];
     if (name != null) {
       fields.push('name = ?');
       vals.push(name);
+    }
+    if (role != null) {
+      fields.push('role = ?');
+      vals.push(role === 'admin' ? 'admin' : 'user');
     }
     if (location != null) {
       fields.push('location = ?');
@@ -162,7 +172,7 @@ router.patch('/profile', authMiddleware, async (req, res) => {
     vals.push(req.user.id);
     await pool.query(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`, vals);
     const [rows] = await pool.query(
-      `SELECT id, name, email, location, platform, working_hours, avg_daily_earnings FROM users WHERE id = ?`,
+      `SELECT id, name, email, role, location, platform, working_hours, avg_daily_earnings FROM users WHERE id = ?`,
       [req.user.id]
     );
     const u = rows[0];
@@ -170,6 +180,7 @@ router.patch('/profile', authMiddleware, async (req, res) => {
       id: u.id,
       name: u.name,
       email: u.email,
+      role: u.role,
       location: u.location,
       platform: u.platform,
       working_hours: u.working_hours,

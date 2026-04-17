@@ -93,9 +93,10 @@ router.post('/detect-loss', async (req, res) => {
       });
 
       const [result] = await pool.query(
-        `INSERT INTO claims (user_id, loss_amount, status, risk_score, predicted_income, actual_income, claim_date)
-         VALUES (?, ?, 'pending', ?, ?, ?, ?)`,
-        [req.user.id, loss, fraud.risk_score, predicted_income, actual_income, date]
+        `INSERT INTO claims
+         (user_id, loss_amount, status, risk_score, predicted_income, actual_income, claim_lat, claim_lng, claim_date)
+         VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?)`,
+        [req.user.id, loss, fraud.risk_score, predicted_income, actual_income, mock_gps?.curr_lat ?? null, mock_gps?.curr_lng ?? null, date]
       );
 
       claim = {

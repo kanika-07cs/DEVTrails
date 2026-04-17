@@ -16,6 +16,11 @@ export function DashboardPage() {
   const [predicted, setPredicted] = useState(null);
   const [disruption, setDisruption] = useState(null);
   const [lossResult, setLossResult] = useState(null);
+  const [insights, setInsights] = useState(null);
+  const [riskForecast, setRiskForecast] = useState(null);
+  const [simulationMode, setSimulationMode] = useState(false);
+  const [simInput, setSimInput] = useState({ rainfall_mm: 20, traffic_index: 0.35, demand_drop_pct: 15 });
+  const [simResult, setSimResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null);
 
@@ -27,6 +32,12 @@ export function DashboardPage() {
   useEffect(() => {
     refreshHistory().catch(() => {});
   }, [refreshHistory]);
+
+  useEffect(() => {
+    apiFetch('/insights/overview', { token })
+      .then(setInsights)
+      .catch(() => {});
+  }, [token]);
 
   const todayRow = useMemo(
     () => history.find((r) => String(r.date).slice(0, 10) === date),
@@ -80,6 +91,58 @@ export function DashboardPage() {
     try {
       const res = await apiFetch('/disruption/signals', { token });
       setDisruption(res);
+    } catch (err) {
+      setMsg({ type: 'err', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadInsights() {
+    setLoading(true);
+    try {
+      const res = await apiFetch('/insights/overview', { token });
+      setInsights(res);
+    } catch (err) {
+      setMsg({ type: 'err', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function runRiskForecast() {
+    setLoading(true);
+    try {
+      const payload = {
+        user: { platform: insights?.profile?.platform || 'delivery', location: insights?.profile?.location || '' },
+        weather: { rainfall_mm: Number(simInput.rainfall_mm) },
+        traffic: { congestion_index: Number(simInput.traffic_index) },
+        demand: { drop_pct: Number(simInput.demand_drop_pct) },
+      };
+      const res = await apiFetch('/api/risk/forecast', { token, method: 'POST', body: payload });
+      setRiskForecast(res);
+    } catch (err) {
+      setMsg({ type: 'err', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function runLiveSimulation(e) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await apiFetch('/api/simulation/run', {
+        token,
+        method: 'POST',
+        body: {
+          rainfall_mm: Number(simInput.rainfall_mm),
+          traffic_index: Number(simInput.traffic_index),
+          demand_drop_pct: Number(simInput.demand_drop_pct),
+          actual_income: actual != null ? Number(actual) : undefined,
+        },
+      });
+      setSimResult(res);
     } catch (err) {
       setMsg({ type: 'err', text: err.message });
     } finally {
@@ -164,6 +227,47 @@ export function DashboardPage() {
           <h3>Opportunity loss</h3>
           <p className="stat-value mono">{loss != null ? loss.toFixed(2) : '—'}</p>
           <p className="muted small">Expected − actual (never below zero)</p>
+        </article>
+      </section>
+
+      <section className="grid cards-3 mb-lg">
+        <article className="card stat">
+          <h3>Risk forecast</h3>
+          <p className="stat-value mono">{riskForecast?.risk_level || '—'}</p>
+          <p className="muted small">
+            Expected loss: {riskForecast?.expected_loss_percentage != null ? `${riskForecast.expected_loss_percentage}%` : '—'}
+          </p>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={runRiskForecast} disabled={loading}>
+            Forecast risk
+          </button>
+        </article>
+      </section>
+
+      <section className="grid cards-3 mb-lg">
+        <article className="card stat">
+          <h3>Resilience score</h3>
+          <p className="stat-value mono">{insights?.kpis?.resilience_score ?? '—'}</p>
+          <p className="muted small">Composite readiness under disruption + claims behavior</p>
+        </article>
+        <article className="card stat">
+          <h3>Claim approval rate</h3>
+          <p className="stat-value mono">
+            {insights?.kpis?.claim_approval_rate != null
+              ? `${Math.round(insights.kpis.claim_approval_rate * 100)}%`
+              : '—'}
+          </p>
+          <p className="muted small">Higher means smoother payout reliability</p>
+        </article>
+        <article className="card stat">
+          <h3>High-risk share</h3>
+          <p className="stat-value mono">
+            {insights?.kpis?.risk_mix?.high != null
+              ? `${Math.round(insights.kpis.risk_mix.high * 100)}%`
+              : '—'}
+          </p>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={loadInsights} disabled={loading}>
+            Refresh insights
+          </button>
         </article>
       </section>
 
@@ -255,6 +359,98 @@ export function DashboardPage() {
             </div>
           ) : (
             <p className="muted">Load signals to preview external disruption context.</p>
+          )}
+        </article>
+      </section>
+
+      <section className="grid two-col">
+        <article className="card">
+          <h2>Simulation Mode</h2>
+          <p className="muted">Toggle to model rainfall, traffic, and demand-drop impact in real time.</p>
+          <label className="toggle-row">
+            <input
+              type="checkbox"
+              checked={simulationMode}
+              onChange={(e) => setSimulationMode(e.target.checked)}
+            />
+            <span>Enable simulation mode</span>
+          </label>
+          <form className="form compact" onSubmit={runLiveSimulation}>
+            <label className="field">
+              <span>Rainfall (mm)</span>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={simInput.rainfall_mm}
+                onChange={(e) =>
+                  setSimInput((s) => ({ ...s, rainfall_mm: e.target.value }))
+                }
+                required
+                disabled={!simulationMode}
+              />
+            </label>
+            <label className="field">
+              <span>Traffic index (0-1)</span>
+              <input
+                type="number"
+                min="0"
+                max="1"
+                step="0.01"
+                value={simInput.traffic_index}
+                onChange={(e) => setSimInput((s) => ({ ...s, traffic_index: e.target.value }))}
+                disabled={!simulationMode}
+              />
+            </label>
+            <label className="field">
+              <span>Demand drop (%)</span>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="1"
+                value={simInput.demand_drop_pct}
+                onChange={(e) => setSimInput((s) => ({ ...s, demand_drop_pct: e.target.value }))}
+                disabled={!simulationMode}
+              />
+            </label>
+            <button className="btn btn-secondary" type="submit" disabled={loading || !simulationMode}>
+              Run simulation
+            </button>
+          </form>
+          {simResult ? (
+            <ul className="kv mt-md">
+              <li>
+                <span>Predicted income</span>
+                <span className="mono">{simResult.predicted_income.toFixed(2)}</span>
+              </li>
+              <li>
+                <span>Actual income</span>
+                <span className="mono">{simResult.actual_income.toFixed(2)}</span>
+              </li>
+              <li>
+                <span>Loss</span>
+                <span className="mono">{simResult.loss.toFixed(2)}</span>
+              </li>
+              <li>
+                <span>Claim triggered</span>
+                <span>{simResult.claim_triggered ? 'Yes' : 'No'}</span>
+              </li>
+            </ul>
+          ) : null}
+        </article>
+
+        <article className="card">
+          <h2>AI recommendations</h2>
+          <p className="muted">Actionable suggestions generated from risk, disruption, and claims behavior.</p>
+          {insights?.recommendations?.length ? (
+            <ul className="tips">
+              {insights.recommendations.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">Run insights to generate recommendations.</p>
           )}
         </article>
       </section>

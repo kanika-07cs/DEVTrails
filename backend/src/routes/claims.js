@@ -7,6 +7,31 @@ import { simulateUpiPayout } from '../services/payoutService.js';
 const router = Router();
 router.use(authMiddleware);
 
+function buildClaimExplanation(row) {
+  const parts = [];
+  if (row.risk_score === 'high') {
+    parts.push('High anomaly pattern detected.');
+  } else if (row.risk_score === 'medium') {
+    parts.push('Some inconsistency detected.');
+  } else {
+    parts.push('Behavior pattern appears consistent.');
+  }
+
+  if (row.predicted_income != null && row.actual_income != null) {
+    const gap = Math.max(0, Number(row.predicted_income) - Number(row.actual_income));
+    parts.push(`Estimated opportunity gap: ${gap.toFixed(2)}.`);
+  }
+
+  if (row.status === 'approved') {
+    parts.push('Payout path completed.');
+  } else if (row.status === 'pending') {
+    parts.push('Awaiting simulated review decision.');
+  } else {
+    parts.push('Marked rejected in simulation.');
+  }
+  return parts.join(' ');
+}
+
 router.get('/claims', async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -16,7 +41,12 @@ router.get('/claims', async (req, res) => {
        ORDER BY created_at DESC`,
       [req.user.id]
     );
-    res.json(rows);
+    res.json(
+      rows.map((row) => ({
+        ...row,
+        explanation: buildClaimExplanation(row),
+      }))
+    );
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed to load claims' });
@@ -66,14 +96,17 @@ router.post('/claim/create', async (req, res) => {
     });
 
     const [result] = await pool.query(
-      `INSERT INTO claims (user_id, loss_amount, status, risk_score, predicted_income, actual_income, claim_date)
-       VALUES (?, ?, 'pending', ?, ?, ?, ?)`,
+      `INSERT INTO claims
+       (user_id, loss_amount, status, risk_score, predicted_income, actual_income, claim_lat, claim_lng, claim_date)
+       VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?)`,
       [
         req.user.id,
         Number(loss_amount),
         fraud.risk_score,
         predicted_income != null ? Number(predicted_income) : null,
         actual_income != null ? Number(actual_income) : reportedToday,
+        mock_gps?.curr_lat ?? null,
+        mock_gps?.curr_lng ?? null,
         claim_date,
       ]
     );

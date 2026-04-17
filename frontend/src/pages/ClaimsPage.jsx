@@ -174,6 +174,7 @@ export function ClaimsPage() {
                 <th>Loss</th>
                 <th>Risk</th>
                 <th>Status</th>
+                <th>Explainability</th>
                 <th>Payout ref</th>
                 <th />
               </tr>
@@ -181,7 +182,7 @@ export function ClaimsPage() {
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="muted center">
+                  <td colSpan={8} className="muted center">
                     No claims yet. Run loss detection from the dashboard.
                   </td>
                 </tr>
@@ -197,6 +198,7 @@ export function ClaimsPage() {
                     <td>
                       <span className={`status-pill ${c.status}`}>{c.status}</span>
                     </td>
+                    <td className="small">{c.explanation || '—'}</td>
                     <td className="mono small">{c.payout_reference || '—'}</td>
                     <td className="actions">
                       {c.status === 'pending' ? (

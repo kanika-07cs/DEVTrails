@@ -11,7 +11,11 @@ function authHeader(token) {
 }
 
 export async function apiFetch(path, { method = 'GET', token, body, headers = {} } = {}) {
-  const url = `${apiBase()}${path.startsWith('/') ? path : `/${path}`}`;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  const url =
+    normalized.startsWith('/api/')
+      ? normalized
+      : `${apiBase()}${normalized}`;
   const res = await fetch(url, {
     method,
     headers: {

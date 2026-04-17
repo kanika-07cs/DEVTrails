@@ -6,10 +6,18 @@ import { RegisterPage } from './pages/RegisterPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { ClaimsPage } from './pages/ClaimsPage.jsx';
 import { HistoryPage } from './pages/HistoryPage.jsx';
+import { DemandMapPage } from './pages/DemandMapPage.jsx';
+import { AdminPage } from './pages/AdminPage.jsx';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  if (user?.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 }
 
@@ -27,8 +35,17 @@ export default function App() {
         }
       >
         <Route index element={<DashboardPage />} />
+        <Route path="demand-map" element={<DemandMapPage />} />
         <Route path="claims" element={<ClaimsPage />} />
         <Route path="history" element={<HistoryPage />} />
+        <Route
+          path="admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

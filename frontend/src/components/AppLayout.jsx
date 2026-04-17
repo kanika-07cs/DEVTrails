@@ -24,6 +24,14 @@ export function AppLayout() {
           <NavLink className="nav-link" to="/history">
             History
           </NavLink>
+          <NavLink className="nav-link" to="/demand-map">
+            Demand Heatmap
+          </NavLink>
+          {user?.role === 'admin' ? (
+            <NavLink className="nav-link" to="/admin">
+              Admin Dashboard
+            </NavLink>
+          ) : null}
         </nav>
         <div className="sidebar-footer">
           <div className="user-chip">
